@@ -7,7 +7,7 @@ import AgentChat from './components/AgentChat';
 import SupervisorChat from './components/SupervisorChat';
 
 const SOCKET_SERVER_URL =
-  import.meta.env.VITE_SOCKET_SERVER_URL || 'http://localhost:5177';
+  import.meta.env.VITE_SOCKET_SERVER_URL || 'http://localhost:5173';
 
 const socket = io(SOCKET_SERVER_URL, {
   transports: ['websocket'],

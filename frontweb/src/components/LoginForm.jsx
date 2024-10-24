@@ -13,17 +13,22 @@ function LoginForm({
   const [role, setRole] = useState('');
   const [agentCode, setAgentCode] = useState('');
   const [supervisorCode, setSupervisorCode] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  // Function to handle role change with validation
+  // Function to handle role change
   const handleRoleChange = (selectedRole) => {
-    if (
-      (selectedRole === 'agent' && agentCode === 'FoundeverAgentRole') ||
-      (selectedRole === 'supervisor' && supervisorCode === 'FoundeverSupRole') ||
-      selectedRole === 'user'
-    ) {
-      setRole(selectedRole);
-    } else if (selectedRole !== '') {
-      alert('Invalid code for selected role');
+    setRole(selectedRole);
+    setErrorMessage(''); // Clear any previous error messages
+  };
+
+  // Function to validate codes and attempt to join room
+  const attemptJoinRoom = () => {
+    if (role === 'agent' && agentCode !== 'FoundeverAgentRole') {
+      setErrorMessage('Invalid code for Agent role');
+    } else if (role === 'supervisor' && supervisorCode !== 'FoundeverSupRole') {
+      setErrorMessage('Invalid code for Supervisor role');
+    } else {
+      joinRoom();
     }
   };
 
@@ -94,7 +99,7 @@ function LoginForm({
           <select
             id="role"
             value={role}
-            onChange={(e) => setRole(e.target.value)}
+            onChange={(e) => handleRoleChange(e.target.value)}
             className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white"
           >
             <option value="">Select Role</option>
@@ -143,10 +148,15 @@ function LoginForm({
           </>
         )}
 
+        {/* Error Message Display */}
+        {errorMessage && (
+          <p className="text-red-500 text-sm mb-4">{errorMessage}</p>
+        )}
+
         {/* Join Button */}
         {role && (
           <button
-            onClick={joinRoom}
+            onClick={attemptJoinRoom}
             disabled={!role} // Disable button if no role is selected
             className={`w-full bg-indigo-${role ? '600' : '400'} text-white py-2 px-4 rounded-md hover:bg-indigo-${role ? '700' : '400'} focus:outline-none transition duration-${role ? '150' : ''} ease-in-out`}
           >

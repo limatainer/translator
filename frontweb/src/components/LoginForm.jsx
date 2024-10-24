@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 function LoginForm({
   room,
   setRoom,
@@ -5,10 +7,26 @@ function LoginForm({
   setUsername,
   language,
   setLanguage,
-  role,
-  setRole,
   joinRoom,
 }) {
+  // Initialize role with an empty string for default "Select Role"
+  const [role, setRole] = useState('');
+  const [agentCode, setAgentCode] = useState('');
+  const [supervisorCode, setSupervisorCode] = useState('');
+
+  // Function to handle role change with validation
+  const handleRoleChange = (selectedRole) => {
+    if (
+      (selectedRole === 'agent' && agentCode === 'FoundeverAgentRole') ||
+      (selectedRole === 'supervisor' && supervisorCode === 'FoundeverSupRole') ||
+      selectedRole === 'user'
+    ) {
+      setRole(selectedRole);
+    } else if (selectedRole !== '') {
+      alert('Invalid code for selected role');
+    }
+  };
+
   return (
     <div className="flex-grow flex items-center justify-center bg-[#09092d]">
       <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
@@ -65,7 +83,8 @@ function LoginForm({
             <option value="pt-pt">Portuguese</option>
           </select>
         </div>
-        <div className="mb-6">
+        {/* Role Selection */}
+        <div className="mb-4">
           <label
             htmlFor="role"
             className="block text-sm font-medium mb-1 text-white"
@@ -78,17 +97,62 @@ function LoginForm({
             onChange={(e) => setRole(e.target.value)}
             className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white"
           >
+            <option value="">Select Role</option>
+            <option value="user">User</option>
             <option value="agent">Agent</option>
             <option value="supervisor">Supervisor</option>
-            <option value="user">User</option>
           </select>
         </div>
-        <button
-          onClick={joinRoom}
-          className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out"
-        >
-          Join Conversation
-        </button>
+
+        {/* Conditional Inputs for Codes */}
+        {role === 'agent' && (
+          <>
+            <label
+              htmlFor="agentCode"
+              className="block text-sm font-medium mb-1 text-white"
+            >
+              Agent Code:
+            </label>
+            <input
+              id="agentCode"
+              type="text"
+              placeholder="Enter agent code"
+              value={agentCode}
+              onChange={(e) => setAgentCode(e.target.value)}
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white mb-4"
+            />
+          </>
+        )}
+
+        {role === 'supervisor' && (
+          <>
+            <label
+              htmlFor="supervisorCode"
+              className="block text-sm font-medium mb-1 text-white"
+            >
+              Supervisor Code:
+            </label>
+            <input
+              id="supervisorCode"
+              type="text"
+              placeholder="Enter supervisor code"
+              value={supervisorCode}
+              onChange={(e) => setSupervisorCode(e.target.value)}
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white mb-4"
+            />
+          </>
+        )}
+
+        {/* Join Button */}
+        {role && (
+          <button
+            onClick={joinRoom}
+            disabled={!role} // Disable button if no role is selected
+            className={`w-full bg-indigo-${role ? '600' : '400'} text-white py-2 px-4 rounded-md hover:bg-indigo-${role ? '700' : '400'} focus:outline-none transition duration-${role ? '150' : ''} ease-in-out`}
+          >
+           Join Conversation
+          </button>
+        )}
       </div>
     </div>
   );
